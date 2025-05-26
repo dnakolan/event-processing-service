@@ -2,12 +2,12 @@
 A Go service that processes user activity events (clicks, views, purchases)
 
 # Features
-# Batch Event Ingestion - POST /events (accept arrays of events)
-# Analytics API - GET /analytics/summary?window=1h|24h|7d
-# Real-time WebSocket - Stream live events to connected clients
-# Event Validation - Schema validation, deduplication
-# In-memory Aggregation - Count events by type, user, time windows
-# Docker containerization
+* Batch Event Ingestion - POST /events (accept arrays of events)
+* Analytics API - GET /analytics/summary?window=1h|24h|7d
+* Real-time WebSocket - Stream live events to connected clients
+* Event Validation - Schema validation, deduplication
+* In-memory Aggregation - Count events by type, user, time windows
+* Docker containerization
 
 # Tech Stack
 * Language: Go 1.24+
