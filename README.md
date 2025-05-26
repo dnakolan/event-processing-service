@@ -37,6 +37,21 @@ trail-data-service/
 └── Dockerfile.deps   // isolated base image to speed up docker build
 ```
 
+# Event Schema
+```
+{
+  "event_id": "uuid",
+  "user_id": "string",
+  "event_type": "page_view|click|purchase|signup",
+  "timestamp": "RFC3339",
+  "properties": {
+    "page": "/home",
+    "amount": 29.99,
+    "product_id": "xyz"
+  }
+}
+```
+
 # Running the Service
 First run the included build.sh script to build the container images
 ```
