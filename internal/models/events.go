@@ -1,6 +1,9 @@
 package models
 
-import "errors"
+import (
+	"errors"
+	"time"
+)
 
 type EventType string
 
@@ -15,7 +18,7 @@ type Event struct {
 	EventID    string          `json:"event_id"`
 	UserID     string          `json:"user_id"`
 	EventType  EventType       `json:"event_type"`
-	Timestamp  string          `json:"timestamp"`
+	Timestamp  *time.Time      `json:"timestamp"`
 	Properties EventProperties `json:"properties"`
 }
 
@@ -32,8 +35,8 @@ type CreateEventsRequest struct {
 type EventFilter struct {
 	UserID         *string    `json:"user_id"`
 	EventType      *EventType `json:"event_type"`
-	StartTimestamp *string    `json:"start_timestamp"`
-	EndTimestamp   *string    `json:"end_timestamp"`
+	StartTimestamp *time.Time `json:"start_timestamp"`
+	EndTimestamp   *time.Time `json:"end_timestamp"`
 }
 
 func (f *EventFilter) Validate() error {
@@ -43,13 +46,13 @@ func (f *EventFilter) Validate() error {
 	if f.EventType != nil && !isValidEventType(string(*f.EventType)) {
 		return errors.New("invalid event_type")
 	}
-	if f.StartTimestamp != nil && *f.StartTimestamp == "" {
+	if f.StartTimestamp != nil {
 		return errors.New("start_timestamp is required")
 	}
-	if f.EndTimestamp != nil && *f.EndTimestamp == "" {
+	if f.EndTimestamp != nil {
 		return errors.New("end_timestamp is required")
 	}
-	if f.StartTimestamp != nil && f.EndTimestamp != nil && *f.StartTimestamp > *f.EndTimestamp {
+	if f.StartTimestamp != nil && f.EndTimestamp != nil && f.StartTimestamp.After(*f.EndTimestamp) {
 		return errors.New("start_timestamp must be before end_timestamp")
 	}
 	return nil
@@ -112,10 +115,10 @@ func (e *Event) MatchesFilter(filter *EventFilter) bool {
 	if filter.EventType != nil && *filter.EventType != "" && *filter.EventType != e.EventType {
 		return false
 	}
-	if filter.StartTimestamp != nil && *filter.StartTimestamp != "" && e.Timestamp < *filter.StartTimestamp {
+	if filter.StartTimestamp != nil && e.Timestamp.Before(*filter.StartTimestamp) {
 		return false
 	}
-	if filter.EndTimestamp != nil && *filter.EndTimestamp != "" && e.Timestamp > *filter.EndTimestamp {
+	if filter.EndTimestamp != nil && e.Timestamp.After(*filter.EndTimestamp) {
 		return false
 	}
 	return true
