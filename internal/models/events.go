@@ -83,7 +83,7 @@ func (e *Event) Validate() error {
 	if !isValidEventType(string(e.EventType)) {
 		return errors.New("invalid event_type")
 	}
-	if e.Timestamp == "" {
+	if e.Timestamp == nil {
 		return errors.New("timestamp is required")
 	}
 	if err := e.Properties.Validate(); err != nil {
