@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 	"time"
 
@@ -40,6 +41,10 @@ func (h *AnalyticsHandler) GetAnalyticsHandler(c *gin.Context) {
 }
 
 func buildFilterFromWindow(window *string) (*models.EventFilter, error) {
+	if window == nil || *window == "" {
+		return nil, errors.New("window is required")
+	}
+
 	timeWindow, err := time.ParseDuration(*window)
 	if err != nil {
 		return nil, err
