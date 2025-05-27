@@ -69,19 +69,17 @@ docker run -d -p 8080:8080 --name event-service event-processing-service
 ```
 curl -X POST http://localhost:8080/events \
   -H "Content-Type: application/json" \
-  -d '{
-        {
-          "event_id": "e58ed763-928c-4155-bee9-fdbaaadc15f3",
-          "user_id": "123",
-          "event_type": "page_view",
-          "timestamp": "2006-01-02T15:04:05Z07:00",
-          "properties": {
-            "page": "/home",
-            "amount": 29.99,
-            "product_id": "xyz"
-          }
+  -d '{        
+        "event_id": "e58ed763-928c-4155-bee9-fdbaaadc15f3",
+        "user_id": "123",
+        "event_type": "page_view",
+        "timestamp": "2006-01-02T15:04:05Z07:00",
+        "properties": {
+          "page": "/home",
+          "amount": 29.99,
+          "product_id": "xyz"
         }
-}'
+      }'
 ```
 
 GET /analytics/summary?window=1h|24h|7d
