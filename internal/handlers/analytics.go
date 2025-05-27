@@ -33,6 +33,7 @@ func (h *AnalyticsHandler) GetAnalyticsHandler(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	analytics.TimeWindow = window
 
 	c.Header("Content-Type", "application/json")
 	c.JSON(http.StatusOK, analytics)

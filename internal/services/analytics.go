@@ -28,7 +28,6 @@ func (s *analyticsService) GetAnalytics(ctx context.Context, filter *models.Even
 	}
 
 	return &models.Analytics{
-		TimeWindow:    filter.EndTimestamp.Sub(*filter.StartTimestamp),
 		TotalEvents:   len(events),
 		EventsByType:  eventsByType(events),
 		UniqueUsers:   uniqueUsers(events),

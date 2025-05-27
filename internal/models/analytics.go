@@ -3,7 +3,7 @@ package models
 import "time"
 
 type Analytics struct {
-	TimeWindow    time.Duration     `json:"time_window"`
+	TimeWindow    string            `json:"time_window"`
 	TotalEvents   int               `json:"total_events"`
 	EventsByType  map[EventType]int `json:"events_by_type"`
 	UniqueUsers   int               `json:"unique_users"`
