@@ -13,6 +13,8 @@ import (
 
 	"github.com/dnakolan/event-processing-service/internal/config"
 	"github.com/dnakolan/event-processing-service/internal/handlers"
+	"github.com/dnakolan/event-processing-service/internal/services"
+	"github.com/dnakolan/event-processing-service/internal/storage"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,9 +27,17 @@ func main() {
 	router := gin.Default()
 	gin.SetMode(cfg.Server.GinMode)
 
+	storage := storage.NewEventStorage()
+
+	eventsService := services.NewEventsService(storage)
+
 	healthHandler := handlers.NewHealthHandler()
+	eventsHandler := handlers.NewEventsHandler(eventsService)
 
 	router.GET("/health", healthHandler.GetHealthHandler)
+
+	router.POST("/events", eventsHandler.CreateEventsHTTPHandler)
+	router.GET("/ws/events", eventsHandler.CreateEventsWebSocketHandler)
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%s", cfg.Server.Port),
