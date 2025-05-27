@@ -22,14 +22,14 @@ type Event struct {
 	Properties EventProperties `json:"properties"`
 }
 
+type CreateEventRequest struct {
+	Event
+}
+
 type EventProperties struct {
 	Page      string  `json:"page"`
 	Amount    float64 `json:"amount"`
 	ProductID string  `json:"product_id"`
-}
-
-type CreateEventsRequest struct {
-	Events []Event `json:"events"`
 }
 
 type EventFilter struct {
@@ -58,14 +58,9 @@ func (f *EventFilter) Validate() error {
 	return nil
 }
 
-func (e *CreateEventsRequest) Validate() error {
-	if len(e.Events) == 0 {
-		return errors.New("events is required")
-	}
-	for _, event := range e.Events {
-		if err := event.Validate(); err != nil {
-			return err
-		}
+func (e *CreateEventRequest) Validate() error {
+	if err := e.Event.Validate(); err != nil {
+		return err
 	}
 	return nil
 }
@@ -131,4 +126,8 @@ func isValidEventType(eventType string) bool {
 	default:
 		return false
 	}
+}
+
+func (e *CreateEventRequest) NewEventFromRequest() *Event {
+	return &e.Event
 }
