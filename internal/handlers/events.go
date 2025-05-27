@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
+	"time"
 
 	"github.com/dnakolan/event-processing-service/internal/connections"
 	"github.com/dnakolan/event-processing-service/internal/models"
@@ -27,7 +28,7 @@ func NewEventsHandler(service services.EventsService) *EventsHandler {
 	}
 }
 
-func (h *EventsHandler) CreateEventsHandler(c *gin.Context) {
+func (h *EventsHandler) CreateEventsWebSocketHandler(c *gin.Context) {
 	conn, err := h.upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -55,6 +56,31 @@ func (h *EventsHandler) CreateEventsHandler(c *gin.Context) {
 			return
 		}
 	}
+}
+
+func (h *EventsHandler) CreateEventsHTTPHandler(c *gin.Context) {
+	var req models.CreateEventRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := req.Validate(); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	now := time.Now()
+	event := req.NewEventFromRequest()
+	event.Timestamp = &now
+
+	if err := h.service.CreateEvent(c.Request.Context(), event); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.Header("Content-Type", "application/json")
+	c.JSON(http.StatusCreated, event)
 }
 
 func (h *EventsHandler) handleEventJSON(ctx context.Context, message []byte) {
