@@ -67,22 +67,43 @@ docker run -d -p 8080:8080 --name event-service event-processing-service
 # Example Usage (cURL)
 ## POST /events - create events
 ```
-curl -X POST http://localhost:8080/trails \
+curl -X POST http://localhost:8080/events \
   -H "Content-Type: application/json" \
   -d '{
-        events: [ {
-                    "name": "Lamar River Trail",
-                    "lat": 44.8472,
-                    "lon": -109.6278,
-                    "difficulty": "hard",
-                    "length_km": 53
-                  }
-                ]
+        {
+          "event_id": "e58ed763-928c-4155-bee9-fdbaaadc15f3",
+          "user_id": "123",
+          "event_type": "page_view",
+          "timestamp": "2006-01-02T15:04:05Z07:00",
+          "properties": {
+            "page": "/home",
+            "amount": 29.99,
+            "product_id": "xyz"
+          }
+        }
 }'
 ```
 
 GET /analytics/summary?window=1h|24h|7d
-```curl http:///analytics/summary?window=1h```
+```
+curl http:///analytics/summary?window=24h
+
+Returns
+{
+  "time_window": "24h",
+  "total_events": 1250,
+  "events_by_type": {
+    "page_view": 800,
+    "click": 350,
+    "purchase": 100
+  },
+  "unique_users": 45,
+  "events_per_hour": [
+    {"hour": "2025-05-26T14:00:00Z", "count": 120},
+    {"hour": "2025-05-26T15:00:00Z", "count": 95}
+  ]
+}
+```
 
 # Design Considerations
 * Dependency Injection is used for loose coupling between components.
