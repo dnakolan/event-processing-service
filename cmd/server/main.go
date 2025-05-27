@@ -30,14 +30,18 @@ func main() {
 	storage := storage.NewEventStorage()
 
 	eventsService := services.NewEventsService(storage)
+	analyticsService := services.NewAnalyticsService(storage)
 
 	healthHandler := handlers.NewHealthHandler()
 	eventsHandler := handlers.NewEventsHandler(eventsService)
+	analyticsHandler := handlers.NewAnalyticsHandler(analyticsService)
 
 	router.GET("/health", healthHandler.GetHealthHandler)
 
 	router.POST("/events", eventsHandler.CreateEventsHTTPHandler)
 	router.GET("/ws/events", eventsHandler.CreateEventsWebSocketHandler)
+
+	router.GET("/analytics", analyticsHandler.GetAnalyticsHandler)
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%s", cfg.Server.Port),
